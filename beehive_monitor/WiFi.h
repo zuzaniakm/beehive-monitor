@@ -15,8 +15,6 @@ class Wifi
 
 void Wifi::connect()
 {
-  Serial.println(_ssid);
-  Serial.println(_password);
   WiFi.begin(_ssid, _password);
   for (unsigned i = 1; i <= 20; i++)
   {
