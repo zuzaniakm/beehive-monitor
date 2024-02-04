@@ -15,10 +15,16 @@ class Database
     {
         ThingSpeak.begin(_client);
     }
-    unsigned sendData(int data, unsigned field);
+    void prepareField(unsigned field, const char* data);
+    unsigned sendData();
 };
 
-unsigned Database::sendData(int data, unsigned int field)
+void Database::prepareField(unsigned field, const char* data)
 {
-  return ThingSpeak.writeField(_channelId, field, data, _apiWriteKey);
+  ThingSpeak.setField(field, data);
+}
+
+unsigned Database::sendData()
+{
+  return ThingSpeak.writeFields(_channelId, _apiWriteKey);
 }
