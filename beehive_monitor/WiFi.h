@@ -4,14 +4,21 @@
 class Wifi
 {
   private:
-    const char* _ssid;
-    const char* _password;
+    char* _ssid;
+    char* _password;
 
   public: 
-    Wifi(const char* ssid, const char* password) : _ssid(ssid), _password(password) {}
+    Wifi() : _ssid(nullptr), _password(nullptr) {}
+    void setCredentials(char* ssid, char* password);
     void connect();
     void disconnect();
 };
+
+void Wifi::setCredentials(char* ssid, char* password)
+{
+  _ssid = ssid;
+  _password = password;
+}
 
 void Wifi::connect()
 {
@@ -35,9 +42,7 @@ void Wifi::connect()
   WiFi.disconnect();
 }
 
-
 void Wifi::disconnect()
 {
   WiFi.disconnect();
 }
-
