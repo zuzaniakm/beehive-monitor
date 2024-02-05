@@ -4,23 +4,17 @@
 class Wifi
 {
   private:
-    char* _ssid;
-    char* _password;
+    const char* _ssid;
+    const char* _password;
 
   public: 
-    Wifi() : _ssid(nullptr), _password(nullptr) {}
-    void setCredentials(char* ssid, char* password);
-    void connect();
+    Wifi(const char* ssid, const char* password) : _ssid(ssid), _password(password) {}
+    bool connect();
     void disconnect();
+    int getStatus();
 };
 
-void Wifi::setCredentials(char* ssid, char* password)
-{
-  _ssid = ssid;
-  _password = password;
-}
-
-void Wifi::connect()
+bool Wifi::connect()
 {
   WiFi.begin(_ssid, _password);
   for (unsigned i = 1; i <= 20; i++)
@@ -35,14 +29,20 @@ void Wifi::connect()
       Serial.println("WiFi connected!");
       Serial.println("IP address: ");
       Serial.println(WiFi.localIP());
-      return;
+      return true;
     }
   }
   Serial.println("WiFi failed to connect!");
   WiFi.disconnect();
+  return false;
 }
 
 void Wifi::disconnect()
 {
   WiFi.disconnect();
+}
+
+int Wifi::getStatus()
+{
+  return WiFi.status();
 }
