@@ -38,21 +38,29 @@ void BeehiveMonitor::setup()
       String message = serialBT.readStringUntil(' ');
       if (message == "wifi")
       {
-        connectToWiFi(serialBT.readStringUntil(' ').c_str(), serialBT.readString().c_str());
+        if (connectToWiFi(serialBT.readStringUntil(' ').c_str(), serialBT.readStringUntil('\n').c_str()))
+        {
+          serialBT.println("WiFi connected!");
+        }
+        else
+        {
+          serialBT.println("WiFi failed to connect!");
+        }
       }
       else if (message == "id")
       { 
-        setID(serialBT.readString().toInt());
+        setID(serialBT.readStringUntil('\n').toInt());
         serialBT.print("ID changed to ");
         serialBT.println(_ID);
       }
-      else if (message == "ok")
+      else if (message == "ok\n")
       { 
         if (_wifi->getStatus() == WL_CONNECTED)
         {
           serialBT.println("Setup complete!");
-          serialBT.end();
+          delay(100);
           _setup = true;
+          serialBT.end();
         }
         else 
         {
@@ -75,6 +83,9 @@ void BeehiveMonitor::setID(unsigned ID)
 
 bool BeehiveMonitor::connectToWiFi(const char* ssid, const char* password)
 { 
+  _wifi->disconnect();
+  delete _wifi;
+  _wifi = nullptr;
   _wifi = new Wifi(ssid, password);
   return _wifi->connect();
 }
