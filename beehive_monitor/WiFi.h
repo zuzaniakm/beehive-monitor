@@ -1,8 +1,7 @@
 #pragma once
 #include <WiFi.h>
 
-class Wifi
-{
+class Wifi {
   private:
     const char* _ssid;
     const char* _password;
@@ -14,22 +13,17 @@ class Wifi
     int getStatus();
 };
 
-bool Wifi::connect()
-{
+bool Wifi::connect() {
   WiFi.begin(_ssid, _password);
-  for (unsigned i = 1; i <= 20; i++)
-  {
-    if (WiFi.status() != WL_CONNECTED) 
-    {
-        delay(500);
-        Serial.print(".");
-    }
-    else
-    {
+  for (unsigned i = 1; i <= 20; i++) {
+    if (WiFi.status() == WL_CONNECTED) {
       Serial.println("WiFi connected!");
       Serial.println("IP address: ");
       Serial.println(WiFi.localIP());
       return true;
+    } else {
+      delay(500);
+      Serial.print(".");
     }
   }
   Serial.println("WiFi failed to connect!");
@@ -37,12 +31,10 @@ bool Wifi::connect()
   return false;
 }
 
-void Wifi::disconnect()
-{
+void Wifi::disconnect() {
   WiFi.disconnect();
 }
 
-int Wifi::getStatus()
-{
+int Wifi::getStatus() {
   return WiFi.status();
 }
