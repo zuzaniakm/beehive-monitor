@@ -15,6 +15,8 @@ class EmailAlert {
     void alertTemperatureChange(unsigned ID, float curTemperature, float lastTemperature);
     void alertHumidityOutOfBounds(unsigned ID, float humidity);
     void alertHumidityChange(unsigned ID, float curHumidity, float lastHumidity);
+    void alertWeightChange(unsigned ID, float curWeight, float lastWeight);
+
   private:
     void messageFormatter(String& info, String& details, unsigned ID);
     void sendAlert();
@@ -87,7 +89,18 @@ void EmailAlert::alertHumidityChange(unsigned ID, float curHumidity, float lastH
                     <p>Last Humidity: " + String(lastHumidity) + " °C</p>\
                     <p>Humidity Change: " + String(curHumidity - lastHumidity) + " °C</p>";
 
-  _message.subject = F("Alert: Steep change in temperature!");
+  _message.subject = F("Alert: Steep change in humidity!");
+  messageFormatter(info, details, ID);
+  sendAlert();
+}
+
+void EmailAlert::alertWeightChange(unsigned ID, float curWeight, float lastWeight) {
+  String info = "There was a steep change in weight since last reading!";
+  String details = "<p>Current Weight: " + String(curWeight) + " °C</p>\
+                    <p>Last Weight: " + String(lastWeight) + " °C</p>\
+                    <p>Weight Change: " + String(curWeight - lastWeight) + " °C</p>";
+
+  _message.subject = F("Alert: Steep change in weight!");
   messageFormatter(info, details, ID);
   sendAlert();
 }
