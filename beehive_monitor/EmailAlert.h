@@ -4,19 +4,20 @@
 class EmailAlert {
   private:
     String _emailRecipient;
+    bool _emailSet;
     EMailSender _emailSender;
     EMailSender::EMailMessage _message;
 
   public:
     EmailAlert(const char* emailLogin, const char* emailPassword, const char* senderEmail, const char* senderName);
     EmailAlert(const char* emailLogin, const char* emailPassword);
+    bool isEmailSet();
     void setEmailRecipient(String emailRecipient);
     void alertTemperatureOutOfBounds(unsigned ID, float temperature);
     void alertTemperatureChange(unsigned ID, float curTemperature, float lastTemperature);
     void alertHumidityOutOfBounds(unsigned ID, float humidity);
     void alertHumidityChange(unsigned ID, float curHumidity, float lastHumidity);
     void alertWeightChange(unsigned ID, float curWeight, float lastWeight);
-
   private:
     void messageFormatter(String& info, String& details, unsigned ID);
     void sendAlert();
@@ -29,8 +30,13 @@ EmailAlert::EmailAlert(const char* emailLogin, const char* emailPassword, const 
 EmailAlert::EmailAlert(const char* emailLogin, const char* emailPassword) 
   : _emailSender(emailLogin, emailPassword) {}
 
+bool EmailAlert::isEmailSet() {
+  return _emailSet;
+}
+
 void EmailAlert::setEmailRecipient(String emailRecipient) {
   _emailRecipient = emailRecipient;
+  _emailSet = true;
 }
 
 void EmailAlert::messageFormatter(String& messageText, String& info, unsigned ID) {
@@ -109,9 +115,6 @@ void EmailAlert::sendAlert() {
   EMailSender::Response resp = _emailSender.send(_emailRecipient, _message);
 
   Serial.println("Sending status: ");
-
-  Serial.println(resp.status);
-  Serial.println(resp.code);
   Serial.println(resp.desc);
 }
 
