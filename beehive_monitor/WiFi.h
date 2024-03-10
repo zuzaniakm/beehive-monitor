@@ -3,15 +3,27 @@
 
 class Wifi {
   private:
-    const char* _ssid;
-    const char* _password;
+    String _ssid;
+    String _password;
 
   public: 
-    Wifi(const char* ssid, const char* password) : _ssid(ssid), _password(password) {}
+    Wifi() = default;
+    int getStatus();
+    void setCredentials(String ssid, String password);
     bool connect();
     void disconnect();
-    int getStatus();
+    void turnOn();
+    void turnOff();
 };
+
+int Wifi::getStatus() {
+  return WiFi.status();
+}
+
+void Wifi::setCredentials(String ssid, String password) {
+  _ssid = ssid;
+  _password = password;
+}
 
 bool Wifi::connect() {
   WiFi.begin(_ssid, _password);
@@ -32,9 +44,16 @@ bool Wifi::connect() {
 }
 
 void Wifi::disconnect() {
-  WiFi.disconnect();
+  WiFi.disconnect(true);
 }
 
-int Wifi::getStatus() {
-  return WiFi.status();
+void Wifi::turnOff() {
+  WiFi.disconnect(true);
+  WiFi.mode(WIFI_OFF);
+}
+
+void Wifi::turnOn() {
+  WiFi.enableSTA(true);
+  WiFi.mode(WIFI_STA);
+  delay(100);
 }
