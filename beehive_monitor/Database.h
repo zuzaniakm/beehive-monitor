@@ -13,13 +13,15 @@ class Database {
         ThingSpeak.begin(_client);
     }
     void prepareField(unsigned field, float data);
-    unsigned sendData();
+    void sendData();
 };
 
 void Database::prepareField(unsigned field, float data) {
   ThingSpeak.setField(field, data);
 }
 
-unsigned Database::sendData() {
-  return ThingSpeak.writeFields(_channelId, _apiWriteKey);
+void Database::sendData() {
+  Serial.println("Uploading...");
+  ThingSpeak.writeFields(_channelId, _apiWriteKey);
+  delay(1000);
 }
