@@ -1,0 +1,25 @@
+#pragma once
+
+#define DHT_PIN 5
+
+#define MIN_TEMPERATURE 15
+#define MAX_TEMPERATURE 35
+#define ALLOWED_TEMP_CHANGE 10
+
+#define MIN_HUMIDITY 50
+#define MAX_HUMIDITY 90
+#define ALLOWED_HUM_CHANGE 50
+
+#define HX711_DATA_PIN 19
+#define HX711_CLOCK_PIN 18
+
+#define DEFAULT_SCALE_OFFSET 10000
+#define DEFAULT_SCALE_CALIBRATION 21
+#define ALLOWED_WEIGHT_CHANGE 2
+
+#define SENDER_EMAIL_NAME "Beehive Monitor"
+#define SENDER_EMAIL_LOGIN "beehivemonitoresp@gmail.com"
+#define SENDER_EMAIL_PASSWORD ""
+
+#define SCAN_DELAY 10
+#define UPLOAD_DELAY 60
