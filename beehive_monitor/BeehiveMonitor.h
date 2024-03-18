@@ -6,7 +6,7 @@
 #include <DHT.h>
 #include <HX711.h>
 #include <BluetoothSerial.h>
-
+#include <Preferences.h>
 
 class BeehiveMonitor {
 private:
@@ -15,6 +15,7 @@ private:
   DHT _dht;
   HX711 _scale;
   EmailAlert _emailAlert;
+  Preferences _settings;
 
   unsigned _ID;
   unsigned _delay;
@@ -33,9 +34,12 @@ public:
 private:
   void setID(unsigned ID);
   void setDelay(unsigned delay);
+  void readSettings();
   void processWiFiCommand(BluetoothSerial& serialBT);
   void processIDCommand(BluetoothSerial& serialBT);
   void processReadyCommand(BluetoothSerial& serialBT);
+  void processTareCommand(BluetoothSerial& serialBT);
+  void processOffsetCommand(BluetoothSerial& serialBT);
   void processCalibrateCommand(BluetoothSerial& serialBT);
   void processEmailCommand(BluetoothSerial& serialBT);
   void processDelayCommand(BluetoothSerial& serialBT);
@@ -69,6 +73,7 @@ void BeehiveMonitor::setID(unsigned ID) {
 void BeehiveMonitor::setup() {
   BluetoothSerial serialBT;
   serialBT.begin("Beehive Monitor");
+  _settings.begin("settings", false);
 
   while (!_setup) {
     if (serialBT.available()) {
@@ -78,8 +83,9 @@ void BeehiveMonitor::setup() {
       } else if (message == "id") {
         processIDCommand(serialBT);
       } else if (message == "tare\n") {
-        _scale.tare();
-        serialBT.println(_scale.get_offset());
+        processTareCommand(serialBT);
+      } else if (message == "offset") {
+        processOffsetCommand(serialBT);
       } else if (message == "calibrate") {
         processCalibrateCommand(serialBT);
       } else if (message == "email") {
@@ -94,7 +100,29 @@ void BeehiveMonitor::setup() {
     }
     delay(100);
   }
+  _settings.end();
   //_emailAlert.alertHumidityOutOfBounds(_ID, 99.9);
+}
+
+void BeehiveMonitor::readSettings() {
+  _settings.begin("settings", true);
+
+  String ssid = _settings.getString("ssid", "");
+  String email = _settings.getString("email", "");
+
+  if (ssid == "" || email == "") {
+    setup();
+  } else {
+    String password = _settings.getString("password", "");
+    _wifi.setCredentials(ssid, password);
+    _emailAlert.setEmailRecipient(email);
+    _ID = _settings.getUInt("id", 0);
+    _delay = _settings.getUInt("delay", SCAN_DELAY);
+    _scale.set_offset(_settings.getLong("offset", DEFAULT_SCALE_OFFSET));
+    _scale.set_scale(_settings.getFloat("calibration", DEFAULT_SCALE_CALIBRATION));
+  }
+
+  _settings.end();
 }
 
 bool BeehiveMonitor::connectToWiFi(String ssid, String password) {
@@ -106,6 +134,8 @@ void BeehiveMonitor::processWiFiCommand(BluetoothSerial& serialBT) {
   String ssid = serialBT.readStringUntil(' ');
   String password = serialBT.readStringUntil('\n');
   if (connectToWiFi(ssid, password)) {
+    _settings.putString("ssid", ssid);
+    _settings.putString("password", password);
     serialBT.println("WiFi connected!");
   } else {
     serialBT.println("WiFi failed to connect!");
@@ -116,6 +146,7 @@ void BeehiveMonitor::processIDCommand(BluetoothSerial& serialBT) {
   setID(serialBT.readStringUntil('\n').toInt());
   serialBT.print("ID changed to ");
   serialBT.println(_ID);
+  _settings.putUInt("id", _ID);
 }
 
 void BeehiveMonitor::processReadyCommand(BluetoothSerial& serialBT) {
@@ -134,14 +165,27 @@ void BeehiveMonitor::processReadyCommand(BluetoothSerial& serialBT) {
   }
 }
 
+void BeehiveMonitor::processTareCommand(BluetoothSerial& serialBT) {
+  _scale.tare();
+  long offset = _scale.get_offset();
+  serialBT.println("Offset: " + offset);
+}
+
+void BeehiveMonitor::processOffsetCommand(BluetoothSerial& serialBT) {
+  long offset = serialBT.readStringUntil('\n').toInt();
+  _scale.set_offset(offset);
+  _settings.putLong("offset", offset);
+}
+
 void BeehiveMonitor::processCalibrateCommand(BluetoothSerial& serialBT) {
-  int units = serialBT.readStringUntil('\n').toInt();
+  long units = serialBT.readStringUntil('\n').toInt();
   serialBT.print(units);
   if (units < 1000) {
     serialBT.println("Wrong value!");
     serialBT.println("Input value higher than 1000 (e.g. calibrate 1500)!");
   } else {
     _scale.calibrate_scale(units, 20);
+    _settings.putFloat("calibration", _scale.get_scale());
   }
 }
 
@@ -154,6 +198,7 @@ void BeehiveMonitor::processEmailCommand(BluetoothSerial& serialBT) {
       _emailAlert.setEmailRecipient(email);
       serialBT.print("Email address changed to ");
       serialBT.println(email);
+      _settings.putString("email", email);
       return;
     }
   }
@@ -165,6 +210,7 @@ void BeehiveMonitor::processDelayCommand(BluetoothSerial& serialBT) {
   serialBT.print("Delay changed to ");
   serialBT.print(_delay);
   serialBT.println(" min");
+  _settings.putUInt("delay", _delay);
 }
 
 void BeehiveMonitor::readData(bool upload) {
@@ -176,17 +222,16 @@ void BeehiveMonitor::readData(bool upload) {
   if (isnan(temperature) || isnan(humidity)) {
     Serial.println("Failed to read from DHT sensor!");
   } else {
+    printReadings(temperature, humidity, weight);
     _wifi.turnOn();
-    if (_wifi.connect()) 
-    {
-      printReadings(temperature, humidity, weight);
+    if (_wifi.connect()) {
       checkReadings(temperature, humidity, weight);
       if (upload) {
         sendDataToDB(temperature, humidity, weight);
       }
       _wifi.turnOff();
     }
-  } 
+  }
 }
 
 void BeehiveMonitor::printReadings(float temperature, float humidity, float weight) {
@@ -208,21 +253,40 @@ void BeehiveMonitor::printReadings(float temperature, float humidity, float weig
 }
 
 void BeehiveMonitor::checkReadings(float temperature, float humidity, float weight) {
+  unsigned alertsCount = 0;
+
+  //Temperature check
   if (temperature < MIN_TEMPERATURE || temperature > MAX_TEMPERATURE) {
+    ++alertsCount;
     _emailAlert.alertTemperatureOutOfBounds(_ID, temperature);
   } else if (abs(temperature - _lastTemperature) > ALLOWED_TEMP_CHANGE && _lastTemperature != 0) {
+    //++alertsCount;
     //_emailAlert.alertTemperatureChange(_ID, temperature, _lastTemperature);
   }
 
+  //Humidity check
   if (humidity < MIN_HUMIDITY || humidity > MAX_HUMIDITY) {
+      ++alertsCount;
     _emailAlert.alertHumidityOutOfBounds(_ID, humidity);
   } else if (abs(humidity - _lastHumidity) > ALLOWED_HUM_CHANGE && _lastHumidity != 0) {
+    //++alertsCount;
     //_emailAlert.alertHumidityChange(_ID, humidity, _lastHumidity);
   }
 
+  //Weigh check
   if (abs(weight - _lastWeight) > ALLOWED_WEIGHT_CHANGE && _lastWeight != 0) {
+    //++alertsCount;
     //_emailAlert.alertWeightChange(_ID, weight, _lastWeight);
   }
+  
+  if (alertsCount > 0) {
+    if (alertsCount > 1) {
+        _emailAlert.alertMultiple(_ID, temperature, _lastTemperature, humidity, _lastHumidity, weight, _lastWeight);
+    }
+    if (_wifi.connect()) {
+        _emailAlert.sendAlert();
+    }
+}
 
   _lastTemperature = temperature;
   _lastHumidity = humidity;
