@@ -18,9 +18,11 @@ class EmailAlert {
     void alertHumidityOutOfBounds(unsigned ID, float humidity);
     void alertHumidityChange(unsigned ID, float curHumidity, float lastHumidity);
     void alertWeightChange(unsigned ID, float curWeight, float lastWeight);
+    void alertMultiple(unsigned ID, float curTemperature, float lastTemperature, float curHumidity, float lastHumidity, float curWeight, float lastWeight);
+    void sendAlert();
+
   private:
     void messageFormatter(String& info, String& details, unsigned ID);
-    void sendAlert();
     String getStyle();
 };
 
@@ -66,7 +68,6 @@ void EmailAlert::alertTemperatureOutOfBounds(unsigned ID, float temperature) {
 
   _message.subject = F("Alert: Temperature out of bounds!");
   messageFormatter(info, details, ID);
-  sendAlert();
 }
 
 void EmailAlert::alertTemperatureChange(unsigned ID, float curTemperature, float lastTemperature) {
@@ -77,7 +78,6 @@ void EmailAlert::alertTemperatureChange(unsigned ID, float curTemperature, float
 
   _message.subject = F("Alert: Steep change in temperature!");
   messageFormatter(info, details, ID);
-  sendAlert();
 }
 
 void EmailAlert::alertHumidityOutOfBounds(unsigned ID, float humidity) {
@@ -86,7 +86,6 @@ void EmailAlert::alertHumidityOutOfBounds(unsigned ID, float humidity) {
 
   _message.subject = F("Alert: Humidity out of bounds!");
   messageFormatter(info, details, ID);
-  sendAlert();
 }
 
 void EmailAlert::alertHumidityChange(unsigned ID, float curHumidity, float lastHumidity) {
@@ -97,7 +96,6 @@ void EmailAlert::alertHumidityChange(unsigned ID, float curHumidity, float lastH
 
   _message.subject = F("Alert: Steep change in humidity!");
   messageFormatter(info, details, ID);
-  sendAlert();
 }
 
 void EmailAlert::alertWeightChange(unsigned ID, float curWeight, float lastWeight) {
@@ -108,12 +106,26 @@ void EmailAlert::alertWeightChange(unsigned ID, float curWeight, float lastWeigh
 
   _message.subject = F("Alert: Steep change in weight!");
   messageFormatter(info, details, ID);
-  sendAlert();
+}
+
+void EmailAlert::alertMultiple(unsigned ID, float curTemperature, float lastTemperature, float curHumidity, float lastHumidity, float curWeight, float lastWeight) {
+  String info = "Several values are outside the norm!";
+  String details =  getStyle() + "<strong> Current Temperature: </strong>" + String(curTemperature) + "°C</p>" +
+                    getStyle() + "<strong> Last Temperature: </strong>" + String(lastTemperature) + "°C</p>" +
+                    getStyle() + "<strong> Temperature Change: </strong>" + String(curTemperature - lastTemperature) + "°C</p>";
+                    getStyle() + "<strong> Current Humidity: </strong>" + String(curHumidity) + "%</p>" +
+                    getStyle() + "<strong> Last Humidity: </strong>" + String(lastHumidity) + "%</p>" +
+                    getStyle() + "<strong> Humidity Change: </strong>" + String(curHumidity - lastHumidity) + "%</p>";
+                    getStyle() + "<strong> Current Weight: </strong>" + String(curWeight) + "</p>" +
+                    getStyle() + "<strong> Last Weight: </strong>" + String(lastWeight) + "</p>" +
+                    getStyle() + "<strong> Weight Change: </strong>" + String(curWeight - lastWeight) + "</p>";
+
+  _message.subject = F("Alert: Multiple values out of the norm!");
+  messageFormatter(info, details, ID);
 }
 
 void EmailAlert::sendAlert() {
   EMailSender::Response resp = _emailSender.send(_emailRecipient, _message);
-
   Serial.println("Sending status: ");
   Serial.println(resp.desc);
 }
