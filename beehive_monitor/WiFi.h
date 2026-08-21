@@ -1,12 +1,13 @@
 #pragma once
 #include <WiFi.h>
+#include "driver/adc.h"
 
 class Wifi {
   private:
     String _ssid;
     String _password;
 
-  public: 
+  public:
     Wifi() = default;
     int getStatus();
     void setCredentials(String ssid, String password);
@@ -14,6 +15,7 @@ class Wifi {
     void disconnect();
     void turnOn();
     void turnOff();
+    bool checkConnection();
 };
 
 int Wifi::getStatus() {
@@ -26,6 +28,10 @@ void Wifi::setCredentials(String ssid, String password) {
 }
 
 bool Wifi::connect() {
+  if (_ssid == "") { 
+    return false; 
+  }
+
   WiFi.begin(_ssid, _password);
   for (unsigned i = 1; i <= 20; i++) {
     if (WiFi.status() == WL_CONNECTED) {
@@ -48,12 +54,28 @@ void Wifi::disconnect() {
 }
 
 void Wifi::turnOff() {
-  WiFi.disconnect(true);
-  WiFi.mode(WIFI_OFF);
+  if (WiFi.status() != WL_NO_SHIELD) {
+    adc_power_off();
+    WiFi.disconnect(true);
+    WiFi.mode(WIFI_OFF);
+  }
 }
 
 void Wifi::turnOn() {
-  WiFi.enableSTA(true);
-  WiFi.mode(WIFI_STA);
-  delay(100);
+  if (WiFi.status() == WL_NO_SHIELD) {
+    adc_power_on();
+    WiFi.enableSTA(true);
+    WiFi.mode(WIFI_STA);
+  }
+}
+
+bool Wifi::checkConnection() {
+  int status = WiFi.status();
+  if (status == WL_CONNECTED) {
+    return true;
+  }
+  if (status == WL_NO_SHIELD) {
+    turnOn();
+  }
+  return connect();
 }

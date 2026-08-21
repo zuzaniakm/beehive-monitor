@@ -6,18 +6,28 @@ BeehiveMonitor bhm(THINGSPEAK_CHANNEL_ID, "THINGSPEAK_WRITE_API_KEY");
 void setup() {
   Serial.begin(115200);
   Serial.print("\nStarted...");
-  bhm.setup();
-  bhm.readData(true);
+  delay(1000);
+
+  bool reading = bhm.readSettings();
+  //if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_EXT0 || !reading) {
+      bhm.setup();
+  //}
+  
+  delay(100);
+  bhm.readData();
+  delay(100);
+
+  pinMode(32, INPUT_PULLDOWN);
+  delay(100);
+  unsigned scanDelay = bhm.getDelay();
+  esp_sleep_enable_timer_wakeup(((scanDelay * 60) - 3) * 1e6);
+  //esp_sleep_enable_timer_wakeup(5 * 60 * 1e6);
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_32, 1); 
+  Serial.println("Going to sleep now");
+  Serial.flush();
+  delay(1000);
+  esp_deep_sleep_start();
 }
 
 void loop() {
-  unsigned scans = bhm.getDelay() / SCAN_DELAY;
-  for (unsigned i = 1; i <= scans; i++) {
-    esp_sleep_enable_timer_wakeup(SCAN_DELAY * 60 * 1e6);
-    esp_light_sleep_start();
-    delay(1000);
-    Serial.print(i == scans);
-    bhm.readData(i == scans);
-    delay(1000);
-  }
 }

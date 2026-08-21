@@ -23,5 +23,5 @@ void Database::prepareField(unsigned field, float data) {
 void Database::sendData() {
   Serial.println("Uploading...");
   ThingSpeak.writeFields(_channelId, _apiWriteKey);
-  delay(1000);
+  delay(1500);
 }
