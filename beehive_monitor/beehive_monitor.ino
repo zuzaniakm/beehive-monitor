@@ -1,7 +1,7 @@
 #include "BeehiveMonitor.h"
 #include "Config.h"
 
-BeehiveMonitor bhm(THINGSPEAK_CHANNEL_ID, "THINGSPEAK_WRITE_API_KEY");
+BeehiveMonitor bhm(THINGSPEAK_CHANNEL_ID, THINGSPEAK_WRITE_API_KEY);
 
 void setup() {
   Serial.begin(115200);
