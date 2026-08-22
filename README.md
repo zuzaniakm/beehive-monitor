@@ -1,16 +1,16 @@
 # Beehive Monitor
 
-An ESP32-based IoT device for monitoring bee colony weight, in-hive temperature, and relative humidity. Data is logged locally to an SD card and uploaded wirelessly to a cloud database for remote viewing, with a companion Android app for live readings, history graphs, and Bluetooth-based configuration.
+An ESP32-based IoT device for monitoring bee colony weight, in-hive temperature, and relative humidity with Bluetooth-based configuration. Data is logged locally to an SD card and uploaded wirelessly to a cloud database for remote viewing.
 
 ## Features
 
-- **Weight monitoring** — four load cells (up to 200 kg combined) read via an HX711 amplifier/ADC
-- **Temperature & humidity** — DHT22 sensor placed inside the hive
-- **Wireless data upload** — sends readings to [ThingSpeak](https://thingspeak.com/) over WiFi
-- **Local backup** — every reading is also appended to a CSV file on a microSD card
-- **Email alerts** — automatic notifications when temperature, humidity, or weight moves outside normal bounds or changes abruptly
-- **Bluetooth configuration** — set WiFi credentials, email recipient, scan interval, and scale calibration without reflashing the device
-- **Low power** — the ESP32 spends most of its time in deep sleep, only waking to sample and transmit data
+- **Weight monitoring**: four load cells (up to 200 kg combined) read via an HX711 amplifier/ADC
+- **Temperature & humidity**: DHT22 sensor placed inside the hive
+- **Wireless data upload**: sends readings to [ThingSpeak](https://thingspeak.com/) over WiFi
+- **Local backup**: every reading is also appended to a CSV file on a microSD card
+- **Email alerts**: automatic notifications when temperature, humidity, or weight moves outside normal bounds or changes abruptly
+- **Bluetooth configuration**: set WiFi credentials, email recipient, scan interval, and scale calibration without reflashing the device
+- **Low power**: the ESP32 spends most of its time in deep sleep, only waking to sample and transmit data
 
 ## Hardware
 
