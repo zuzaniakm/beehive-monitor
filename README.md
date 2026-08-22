@@ -52,7 +52,34 @@ Config.h                # pin assignments and thresholds
 
 ## Configuration
 
-You'll also need a ThingSpeak channel ID and write API key, passed into the `BeehiveMonitor` constructor in the main sketch.
+The repo includes a `Config.h` with placeholder values. Before flashing, replace the placeholders (especially `SENDER_EMAIL_LOGIN` and `SENDER_EMAIL_PASSWORD`) with your own:
+
+```cpp
+#pragma once
+#define DHT_PIN 33
+#define MIN_TEMPERATURE 32
+#define MAX_TEMPERATURE 36
+#define ALLOWED_TEMP_CHANGE 10
+#define MIN_HUMIDITY 50
+#define MAX_HUMIDITY 95
+#define ALLOWED_HUM_CHANGE 25
+#define HX711_DATA_PIN 22
+#define HX711_CLOCK_PIN 21
+#define DEFAULT_SCALE_OFFSET 300000
+#define DEFAULT_SCALE_CALIBRATION 115
+#define ALLOWED_WEIGHT_CHANGE 2
+#define THINGSPEAK_CHANNEL_ID 0000000
+#define THINGSPEAK_WRITE_API_KEY "your-thingspeak-write-api-key"
+#define SENDER_EMAIL_NAME "Beehive Monitor"
+#define SENDER_EMAIL_LOGIN "your-email@example.com"
+#define SENDER_EMAIL_PASSWORD "your-app-password"
+#define SCAN_DELAY 30
+#define TIMEZONE 1
+#define DAYSAVETIME 1
+```
+
+`THINGSPEAK_CHANNEL_ID` and `THINGSPEAK_WRITE_API_KEY` are passed into the `BeehiveMonitor` constructor in the main sketch — create your own channel at [ThingSpeak](https://thingspeak.com/) and use its ID and write key here.
+
 
 ## Dependencies (Arduino libraries)
 
