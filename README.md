@@ -25,7 +25,7 @@ An ESP32-based IoT device for monitoring bee colony weight, in-hive temperature,
 
 ## Wiring
 
-| Vývojová doska / ESP32 pin | Peripheral |
+| Development boardESP32 pin | Peripheral |
 |---|---|
 | GPIO 21 | HX711 SCK |
 | GPIO 22 | HX711 DT |
