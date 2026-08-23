@@ -1,0 +1,64 @@
+<svg width="1200" height="300" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Beehive Monitor</title>
+<desc>Banner for the Beehive Monitor project showing a hive, honeycomb pattern, and sensor icons for weight, temperature and humidity.</desc>
+<defs>
+<pattern id="hex" width="52" height="90" patternUnits="userSpaceOnUse" patternTransform="scale(1)">
+<path d="M26 0 L52 15 L52 45 L26 60 L0 45 L0 15 Z" fill="none" stroke="#3a2c14" stroke-width="1.4" opacity="0.35"/>
+<path d="M26 60 L52 75 L52 105 L26 120 L0 105 L0 75 Z" fill="none" stroke="#3a2c14" stroke-width="1.4" opacity="0.35"/>
+</pattern>
+</defs>
+
+<rect width="1200" height="300" fill="#1c1206"/>
+<rect width="1200" height="300" fill="url(#hex)"/>
+
+<!-- sun/vignette accent -->
+<circle cx="1080" cy="70" r="130" fill="#e8a13a" opacity="0.10"/>
+
+<!-- hive silhouette -->
+<g transform="translate(120,150)">
+<rect x="-70" y="70" width="140" height="26" rx="3" fill="#c9781f"/>
+<rect x="-62" y="44" width="124" height="26" rx="3" fill="#d98a2c"/>
+<rect x="-52" y="18" width="104" height="26" rx="3" fill="#e59a3a"/>
+<rect x="-40" y="-6" width="80" height="24" rx="3" fill="#f0aa4c"/>
+<polygon points="-46,-6 46,-6 30,-34 -30,-34" fill="#8a5a1e"/>
+<circle cx="0" cy="90" r="7" fill="#3a2408"/>
+</g>
+
+<!-- bee -->
+<g transform="translate(245,90) rotate(-8)">
+<ellipse cx="-2" cy="-13" rx="12" ry="8" fill="#f4e9d8" opacity="0.5"/>
+<ellipse cx="10" cy="-15" rx="10" ry="7" fill="#f4e9d8" opacity="0.5"/>
+<ellipse cx="0" cy="0" rx="16" ry="11" fill="#f2b23a"/>
+<path d="M-16 -6 A16 11 0 0 1 -16 6 Z" fill="#2a1c08"/>
+<rect x="-6" y="-11" width="5" height="22" fill="#2a1c08"/>
+<rect x="5" y="-11" width="5" height="22" fill="#2a1c08"/>
+<circle cx="17" cy="0" r="6" fill="#2a1c08"/>
+<line x1="20" y1="-6" x2="26" y2="-12" stroke="#2a1c08" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="20" y1="6" x2="26" y2="12" stroke="#2a1c08" stroke-width="1.5" stroke-linecap="round"/>
+</g>
+
+<!-- title -->
+<text x="360" y="140" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#f6e6c8">Beehive Monitor</text>
+<text x="362" y="178" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#d9b97e">ESP32 IoT weight, temperature &amp; humidity monitoring for bee colonies</text>
+
+<!-- sensor chips -->
+<g transform="translate(362,205)">
+<g>
+<rect x="0" y="0" width="150" height="46" rx="8" fill="#2a1c08" stroke="#8a5a1e" stroke-width="1"/>
+<circle cx="26" cy="23" r="9" fill="none" stroke="#e8a13a" stroke-width="2"/>
+<rect x="23" y="14" width="6" height="12" rx="3" fill="#e8a13a"/>
+<text x="44" y="28" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#f0ddb8">Weight</text>
+</g>
+<g transform="translate(168,0)">
+<rect x="0" y="0" width="150" height="46" rx="8" fill="#2a1c08" stroke="#8a5a1e" stroke-width="1"/>
+<rect x="20" y="10" width="8" height="20" rx="4" fill="none" stroke="#e8a13a" stroke-width="2"/>
+<circle cx="24" cy="32" r="6" fill="#e8a13a"/>
+<text x="44" y="28" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#f0ddb8">Temperature</text>
+</g>
+<g transform="translate(336,0)">
+<rect x="0" y="0" width="150" height="46" rx="8" fill="#2a1c08" stroke="#8a5a1e" stroke-width="1"/>
+<path d="M24 10 C30 20 34 26 34 31 A10 10 0 1 1 14 31 C14 26 18 20 24 10 Z" fill="none" stroke="#e8a13a" stroke-width="2"/>
+<text x="44" y="28" font-family="Helvetica, Arial, sans-serif" font-size="14" fill="#f0ddb8">Humidity</text>
+</g>
+</g>
+</svg>

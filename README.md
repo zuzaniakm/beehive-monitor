@@ -1,5 +1,7 @@
 # Beehive Monitor
 
+![Beehive Monitor](images/banner.svg)
+
 An ESP32-based IoT device for monitoring bee colony weight, in-hive temperature, and relative humidity with Bluetooth-based configuration. Data is logged locally to an SD card and uploaded wirelessly to a cloud database for remote viewing.
 
 ## Features
