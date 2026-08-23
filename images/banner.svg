@@ -1,6 +1,6 @@
 <svg width="1200" height="300" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg" role="img">
 <title>Beehive Monitor</title>
-<desc>Banner for the Beehive Monitor project showing a hive, honeycomb pattern, and sensor icons for weight, temperature and humidity.</desc>
+<desc>Banner for the Beehive Monitor project.</desc>
 <defs>
 <pattern id="hex" width="52" height="90" patternUnits="userSpaceOnUse" patternTransform="scale(1)">
 <path d="M26 0 L52 15 L52 45 L26 60 L0 45 L0 15 Z" fill="none" stroke="#3a2c14" stroke-width="1.4" opacity="0.35"/>
@@ -38,7 +38,7 @@
 </g>
 
 <!-- title -->
-<text x="360" y="140" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" fill="#f6e6c8">Beehive Monitor</text>
+<text x="360" y="140" font-family="Georgia, 'Times New Roman', serif" font-size="70" font-weight="700" fill="#f6e6c8">Beehive Monitor</text>
 <text x="362" y="178" font-family="Helvetica, Arial, sans-serif" font-size="19" fill="#d9b97e">ESP32 IoT weight, temperature &amp; humidity monitoring for bee colonies</text>
 
 <!-- sensor chips -->
