@@ -54,14 +54,15 @@ Two custom-printed parts are used in the build:
 1. Cut a wooden base plate sized to fit under the hive.
 2. Mount each load cell to the underside of the base plate using a printed holder (see [3D Printed Parts](#3d-printed-parts)) at each corner, rather than screwing it directly to the wood - the holder provides mounting points and leaves the small clearance the load cell needs to flex under load.
 3. Wire the four load cells together into a Wheatstone bridge (matching wire colors paired up, red wires left free) and connect the bridge's free leads to the HX711 module, then wire the HX711 and DHT22 to the board as described [above](#wiring).
-   ![alt text](images/base.png)
 4. Assemble the enclosure: fit the board and microSD module onto the mounting plate, place the battery underneath, and snap the lid and bottom onto the middle section.
 <table>
   <tr>
-    <td><img src="images/installation.png" width="250"></td>
-    <td><img src="images/installation2.png" width="250"></td>
-    <td><img src="images/device.png" width="250"></td>
+    <td><img src="images/installation.png" width="400"></td>
+    <td><img src="images/installation2.png" width="400"></td>
   </tr>
+  <tr>
+    <td><img src="images/base.png" width="400"></td>
+    <td><img src="images/device.png" width="400"></td>
 </table>
 
 ## Repository Structure
