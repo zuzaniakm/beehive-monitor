@@ -14,29 +14,52 @@ An ESP32-based IoT device for monitoring bee colony weight, in-hive temperature,
 
 ## Hardware
 
-| Component | Part |
-|---|---|
-| Microcontroller | WeMos LOLIN32 (ESP32) |
-| Temperature/humidity sensor | DHT22 (AM2302) |
-| Load cells | SEN-10245 (x4, 50 kg each) |
-| ADC/amplifier | HX711 |
-| Storage | microSD card module (SPI) |
-| Power | 5000 mAh Li-Po battery |
+| Component                   | Part                       |
+| --------------------------- | -------------------------- |
+| Microcontroller             | WeMos LOLIN32 (ESP32)      |
+| Temperature/humidity sensor | DHT22 (AM2302)             |
+| Load cells                  | SEN-10245 (x4, 50 kg each) |
+| ADC/amplifier               | HX711                      |
+| Storage                     | microSD card module (SPI)  |
+| Power                       | 5000 mAh Li-Po battery     |
 
 ## Wiring
 
-| Development boardESP32 pin | Peripheral |
-|---|---|
-| GPIO 21 | HX711 SCK |
-| GPIO 22 | HX711 DT |
-| GPIO 33 | DHT22 DATA |
-| GPIO 5 | SD card CS |
-| GPIO 18 | SD card CLK |
-| GPIO 19 | SD card MISO |
-| GPIO 23 | SD card MOSI |
-| GPIO 34 | Reset/config button |
+| ESP32 Development board | Peripheral          |
+| ----------------------- | ------------------- |
+| GPIO 21                 | HX711 SCK           |
+| GPIO 22                 | HX711 DT            |
+| GPIO 33                 | DHT22 DATA          |
+| GPIO 5                  | SD card CS          |
+| GPIO 18                 | SD card CLK         |
+| GPIO 19                 | SD card MISO        |
+| GPIO 23                 | SD card MOSI        |
+| GPIO 34                 | Reset/config button |
 
 The four load cells are wired together into a Wheatstone bridge configuration and connected to the HX711 module.
+
+![alt text](images/wiring.png)
+
+## 3D Printed Parts
+
+Two custom-printed parts are used in the build:
+
+- **Load cell mounts**: each of the four load cells sits in a printed bracket that holds it slightly off the base plate, leaving room for the cell's center to flex under load. The bracket design used is a free model available on Thingiverse: [Fixed 50kg Loadcell](https://www.thingiverse.com/thing:4740463). Print four copies.
+- **Enclosure**: a snap-fit case that holds the battery, the development board, and the microSD module on a mounting plate above it. The lid and bottom clip onto the middle section without screws, and the sides have cutouts for the USB port, the microSD slot, and the sensor/HX711 cabling. The 3D model files are included in `3D models/`.
+
+![alt text](images/3D_model.png)
+![alt text](images/box.png)
+
+## Assembly
+
+1. Cut a wooden base plate sized to fit under the hive.
+2. Mount each load cell to the underside of the base plate using a printed holder (see [3D Printed Parts](#3d-printed-parts)) at each corner, rather than screwing it directly to the wood — the holder both provides mounting points and leaves the small clearance the load cell needs to flex under load.
+3. Wire the four load cells together into a Wheatstone bridge (matching wire colors paired up, red wires left free) and connect the bridge's free leads to the HX711 module, then wire the HX711 and DHT22 to the board as described above.
+   ![alt text](images/base.png)
+4. Assemble the enclosure: fit the board and microSD module onto the mounting plate, place the battery underneath, and snap the lid and bottom onto the middle section.
+   ![alt text](images/installation.png)
+   ![alt text](images/installation2.png)
+   ![alt text](images/device.png)
 
 ## Repository Structure
 
@@ -47,7 +70,7 @@ Wifi.h                  # WiFi connection management
 Database.h              # ThingSpeak upload wrapper
 SDCardController.h      # SD card read/write helpers
 EmailAlert.h            # SMTP alert emails with HTML formatting
-Config.h                # pin assignments and thresholds 
+Config.h                # pin assignments and thresholds
 ```
 
 ## Configuration
@@ -80,7 +103,6 @@ The repo includes a `Config.h` with placeholder values. Before flashing, replace
 
 `THINGSPEAK_CHANNEL_ID` and `THINGSPEAK_WRITE_API_KEY` are passed into the `BeehiveMonitor` constructor in the main sketch — create your own channel at [ThingSpeak](https://thingspeak.com/) and use its ID and write key here.
 
-
 ## Dependencies (Arduino libraries)
 
 - [DHT sensor library](https://github.com/adafruit/DHT-sensor-library) (Adafruit)
@@ -92,18 +114,18 @@ The repo includes a `Config.h` with placeholder values. Before flashing, replace
 
 On first boot (or after a factory reset), the device enters a 2-minute Bluetooth configuration window. Connect using any serial Bluetooth terminal app and send the following commands:
 
-| Command | Description |
-|---|---|
-| `wifi <ssid> <password>` | Set WiFi credentials |
-| `email <address>` | Set alert recipient email |
-| `id <number>` | Set hive ID (for multi-hive ThingSpeak channels) |
-| `delay <minutes>` | Set measurement interval (minimum 15) |
-| `tare` | Zero the scale |
-| `calibrate <grams>` | Calibrate using a known reference weight |
-| `offset <value>` | Manually set scale offset |
-| `scale <factor>` | Manually set scale calibration factor |
-| `clear` | Wipe all stored settings |
-| `ready` | Finish setup and start normal operation |
+| Command                  | Description                                      |
+| ------------------------ | ------------------------------------------------ |
+| `wifi <ssid> <password>` | Set WiFi credentials                             |
+| `email <address>`        | Set alert recipient email                        |
+| `id <number>`            | Set hive ID (for multi-hive ThingSpeak channels) |
+| `delay <minutes>`        | Set measurement interval (minimum 15)            |
+| `tare`                   | Zero the scale                                   |
+| `calibrate <grams>`      | Calibrate using a known reference weight         |
+| `offset <value>`         | Manually set scale offset                        |
+| `scale <factor>`         | Manually set scale calibration factor            |
+| `clear`                  | Wipe all stored settings                         |
+| `ready`                  | Finish setup and start normal operation          |
 
 Once WiFi and email are set, sending `ready` exits configuration mode and the device begins its normal sense → upload → save → sleep cycle.
 
